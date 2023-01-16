@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Juego de Dados</title>
+  <meta charset="utf-8">
+  <link  rel="stylesheet" type="text/css" href="index.css">
+  <link rel="icon" href="Fotos/logo.png">
+  <style> 
+
+    /* Se establece una imagen de fondo para la página, posiciona en el centro y la ajusta a la pantalla*/ 
+    body { 
+      background-image: url("https://media.giphy.com/media/f73urdknsWliIEZiDw/giphy.gif"); 
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+    } 
+
+    /* Se establece un estilo para la capa principal del juego, se posiciona, da color , medida y se centra el texto*/
+    .container {
+      display: flex;
+      position: center;
+      margin: 110px auto;
+      align-items: center;
+      height: 30%;
+      width: 30%;
+      justify-content: center;
+      background-color: rgba(1, 55, 22 , 1);
+      color: white;
+      text-align: center;
+
+    }
+
+    /* Se establece un estilo para pantallas con un ancho de hasta 3000px y una medida para la capa en esas pantallas */
+    @media (max-width: 3000px) {
+      .container {
+        width: 500px;
+        height: 620px;
+
+      }
+    }
+
+    /* Se establece un estilo para la capa dentro del la capa principal*/
+    .layer {
+      display: flex;
+      flex: 1;
+      margin: 5px;
+    } 
+
+  </style>
+</head>
+<body>
+
+  <!-- Se crea la capa principal del juego y dentro una subcapa para posicionarla dentro de la principal, con un titulo y descripcion del juego -->
+  <div class="container">
+    <div id="layer">
+      <h1>Juego de Dados</h1>
+      <div id="game">
+        <p>Elije si quieres jugar a mayor o a menor:</p>
+        <p>(Si le das a tirar sin elegir se elige automatico)</p>
+        <!-- 2 Botones, para elegir si quieres jugar al numero mas grande o al mas pequeño -->
+        <button id="higher">Mayor</button>
+        <button id="lower">Menor</button>
+      </div>
+      <br>
+      <!-- Boton para lanzar los dados y empezar el juego-->
+      <div id="dice">
+        <button id="roll">Tirar Dados</button>
+        <div id="result"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    //Variable para almacenar los numeros permitidos en el juego para el jugador y la CPU, otra para guardar el puntaje del jugador, de la CPU, otra que almacena el tipo de juego y lo inicializa vacia
+    const dice = [1, 2, 3, 4, 5, 6];
+    let playerScore = 0;
+    let computerScore = 0;
+    let gameType = "";
+
+
+    //Añade un evento al boton de mayor para indicar que se jugará el modo mayor
+    document.getElementById("higher").addEventListener("click", function() {
+     //Se establece el modo de juego en mayor, se oculta el menu inicial y pone el boton de lanzar dados para empezar el juego
+      gameType = "higher";
+      document.getElementById("game").style.display = "none";
+      document.getElementById("dice").style.display = "block";
+    });
+
+
+    //Añade un evento al boton menor para indicar que se jugará el modo menor
+    document.getElementById("lower").addEventListener("click", function() {
+      //Se establece el modo de juego en menor, se oculta el menu inicial y pone el boton de lanzar dados para empezar el juego
+      gameType = "lower";
+      document.getElementById("game").style.display = "none";
+      document.getElementById("dice").style.display = "block";
+    });
+
+
+    //Añade un evento al boton roll para lanzar los dados y determinar el resultado del juego
+    document.getElementById("roll").addEventListener("click", function() {
+      //Se establece el puntaje del jugador y de la CPU mediante un número aleatorio despues de darle al boton de lanzar dado y se muestra el puntaje del jugador y el puntaje de la CPU en la pantalla
+      playerScore = dice[Math.floor(Math.random() * dice.length)];
+      computerScore = dice[Math.floor(Math.random() * dice.length)];
+      document.getElementById("result").innerHTML = `<br>Tu puntuación: ${playerScore}<br>Puntuación de la CPU: ${computerScore}`;
+
+
+    //Se verifica si el jugador ganó, perdió o empató de acuerdo al modo de juego seleccionado y comparandolo con el numero de la CPU y lanzar un mensaje segun el resultado
+      if ((gameType === "higher" && playerScore > computerScore) || (gameType === "lower" && playerScore < computerScore)) {
+        document.getElementById("result").innerHTML += "<br><h1>¡Ganaste!</h1>";
+      } else if ((gameType === "higher" && playerScore < computerScore) || (gameType === "lower" && playerScore > computerScore)) {
+        document.getElementById("result").innerHTML += "<br><h1>¡Perdiste!</h1>";
+      } else {
+        document.getElementById("result").innerHTML += "<br><h1>¡Empate!</h1>";
+      }
+    });
+
+  </script>
+</body>
+</html>
+
+

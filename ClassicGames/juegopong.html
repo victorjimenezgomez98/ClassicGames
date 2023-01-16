@@ -1,0 +1,332 @@
+<!DOCTYPE doctype html>
+<html>
+<head>
+  <title>Juego de Pong</title>
+  <meta charset="utf-8">
+  <link  rel="stylesheet" type="text/css" href="index.css"></head>
+  <link rel="icon" href="Fotos/logo.png">
+  <style>
+
+    /* Se establece un borde negro solido para el canvas (el campo de juego)*/
+    canvas {
+      border: 1px solid black;
+    }
+
+    /* Se establece una imagen de fondo para la página, posiciona en el centro y la ajusta a la pantalla*/
+    body { 
+      background-image: url("https://media.giphy.com/media/J4gTZNa05urUdi9e7S/giphy.gif"); 
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+    } 
+
+    /* Se establece un estilo para la capa principal del juego, se posiciona, da color , medida y se centra el texto*/
+    .container {
+      display: flex;
+      position: center;
+      margin: 110px auto;
+      height: 65%;
+      width: 40%;
+      justify-content: center;
+      background-color: rgba(179, 157, 197  , 1);
+      color: white;
+      text-align: center;
+
+    }
+
+    /* Se establece un estilo para pantallas con un ancho de hasta 3000px y una medida para la capa en esas pantallas */
+    @media (max-width: 3000px) {
+      .container {
+        width: 500px;
+        height: 740px;
+
+      }
+    }
+
+    /* Se establece un estilo para la capa dentro del la capa principal*/
+    .layer {
+      display: flex;
+      flex: 1;
+      margin: 5px;
+    }
+
+    /* Se establece un estilo para el mensaje de Felicidades, se posiciona, se le da color verde, tamaño al texto interior forma y medida*/
+    .success-message {
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+     text-align: center;
+     background-color: green;
+     color: white;
+     padding: 20px;
+     border-radius: 10px;
+   }
+
+   /* Se establece un estilo para el mensaje de Derrota, se posiciona, se le da color rojo, tamaño al texto interior forma y medida*/
+   .success-message2 {
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+     text-align: center;
+     background-color: red;
+     color: white;
+     padding: 20px;
+     border-radius: 10px;
+   }
+
+ </style>
+</head>
+<body>
+
+  <!-- Se crea la capa principal del juego y dentro una subcapa para posicionarla dentro de la principal, con un titulo y descripcion del juego -->
+  <div class="container">
+    <div id="layer">
+      <h1>Juego del pong</h1>
+      <p>Mete 10 puntos para ganar:</p>
+      <br><br>
+      <!-- Se crea un canvas donde se mostrara el juego -->
+      <canvas height="400" id="gameCanvas" width="400">
+      </canvas>
+      <br><br>
+      <!-- Se crea una capa donde se muestra el puntaje del usuario -->
+      <p>Usuario</p>
+      <div id="userScore">
+       0
+     </div>
+     <!-- Se crea una capa donde se muestra el puntaje de la CPU -->
+     <p>CPU</p>
+     <div id="cpuScore">
+      0
+    </div>
+  </div>
+</div>
+
+<script>
+
+  // Obtener una referencia del canvas y su contexto
+  var canvas = document.getElementById("gameCanvas");
+  var context = canvas.getContext("2d");
+
+  // Marcadores iniciados en 0
+  var userScore = 0;
+  var cpuScore = 0;
+
+  // Posiciones iniciales de la pelota
+  var x = canvas.width / 2;
+  var y = canvas.height / 2;
+
+  // Velocidad inicial de la pelota
+  var dx = 2;
+  var dy = -2;
+
+  // Ancho y alto de la raqueta del jugador con la que jugara
+  var paddleWidth = 75;
+  var paddleHeight = 10;
+
+  // Posición inicial de la raqueta
+  var paddleX = (canvas.width - paddleWidth) / 2;
+
+  // Ancho y alto de la raqueta de la CPU
+  var cpuPaddleWidth = 75;
+  var cpuPaddleHeight = 10;
+
+  // Posición inicial de la raqueta de la CPU
+  var cpuPaddleX = (canvas.width - cpuPaddleWidth) / 2;
+
+  // Velocidad de la raqueta de la CPU
+  var cpuPaddleSpeed = 3;
+
+  // Variable pa saber si se está pulsando la tecla de derecha o izquierda
+  var rightPressed = false;
+  var leftPressed = false;
+
+
+  // Escuchar eventos del teclado
+  document.addEventListener("keydown", keyDownHandler);
+  document.addEventListener("keyup", keyUpHandler);
+
+
+  // Manejo de eventos por teclado, keyDownHandler se activa cuando el usuario pulse una tecla y keyUpHandler se activa al levantar la tecla
+  // Si la tecla presionada es derecha se activa rightPressed y si es izquierda leftPressed con un true 
+  // Si la tecla soltada es derecha se establece la variable rightPressed y si es izquierda leftPressed con un false 
+  function keyDownHandler(e) {
+    if (e.key == "Right" || e.key == "ArrowRight") {
+      rightPressed = true;
+    } else if (e.key == "Left" || e.key == "ArrowLeft") {
+      leftPressed = true;
+    }
+  }
+
+  function keyUpHandler(e) {
+    if (e.key == "Right" || e.key == "ArrowRight") {
+      rightPressed = false;
+    } else if (e.key == "Left" || e.key == "ArrowLeft") {
+      leftPressed = false;
+    }
+  }
+
+
+  // Dibuja la raqueta
+  // Primero se hace el trazado para dibujar un rectángulo que representa la raqueta del jugador, luego dibuja un rectángulo con ancho y alto, se establece un color y se rellena el rectangulo con el y se cierra el trazado
+  function drawPaddle() {
+    context.beginPath();
+    context.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+    context.fillStyle = "#9628EC";
+    context.fill();
+    context.closePath();
+  }
+
+  // Dibujar la raqueta de la CPU
+  // Primero se hace el trazado para dibujar un rectángulo que representa la raqueta de la CPU, luego dibuja un rectángulo con ancho y alto, se establece un color y se rellena el rectangulo con el y se cierra el trazado
+  function drawCpuPaddle()
+  {
+    context.beginPath();
+    context.rect(cpuPaddleX, 0, cpuPaddleWidth, cpuPaddleHeight);
+    context.fillStyle = "#9628EC";
+    context.fill();
+    context.closePath();
+  }
+
+  // Dibujar la pelota
+  // Primero se hace el trazado para dibujar un círculo que representa la pelota, se dibuja un círculo en las coordenadas (x, y) con un radio de 10, se establece un color y se rellena el circulo y se cierra el trazado
+  function drawBall() {
+    context.beginPath();
+    context.arc(x, y, 10, 0, Math.PI * 2);
+    context.fillStyle = "#9628EC";
+    context.fill();
+    context.closePath();
+
+
+    // Colisión para la raqueta de la CPU
+    // Si la posicion de Y menos el radio de la pelota (10) es menor o igual que el alto de la raqueta CPU y si la posicion X de la pelota esta entre el inicio y fin de la raqueta invierte el eje de Y para que rebote en otra direccion
+    if (y - 10 <= cpuPaddleHeight) {
+      if (x > cpuPaddleX && x < cpuPaddleX + cpuPaddleWidth) {
+        dy = -dy;
+      }
+    }
+  }
+
+
+  function initGame() {
+
+  // Inicializar las posiciones iniciales de la pelota de manera aleatoria
+    x = Math.random() * canvas.width;
+    y = Math.random() * canvas.height;;
+
+  // Inicializar la velocidad de la pelota
+    dx = 2;
+    dy = -2;
+
+  // Inicializar la posición de la raqueta del jugador
+    paddleX = (canvas.width - paddleWidth) / 2;
+
+  // Inicializar la posición de la raqueta de la CPU
+    cpuPaddleX = (canvas.width - cpuPaddleWidth) / 2;
+
+  }
+
+
+  // Bucle principal del juego
+  function draw() {
+    // Limpiar el canvas
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Dibujar la pelota
+    drawBall();
+
+    // Dibujar la raqueta
+    drawPaddle();
+
+    // Dibujar la raqueta
+    drawCpuPaddle();
+
+
+    // Colisión con la pared derecha e invierte el sentido de la pelota
+    if (x + dx > canvas.width - 10) {
+      dx = -dx;
+    }
+
+    // Colisión con la pared izquierda e invierte el sentido de la pelota
+    if (x + dx < 10) {
+      dx = -dx;
+    }
+
+    // Colisión con la pared superior, si la toca anota punto para el usuario e inicia el juego
+    if (y + dy < 10) {
+      // Aumentar marcador del usuario
+      userScore++;
+      document.getElementById("userScore").innerHTML = userScore;
+      initGame();
+    }
+
+    // Colisión con la raqueta del usuario
+    // Si la posición de Y de la pelota más la dirección Y de la pelota (dy) es mayor que la altura del canvas menos la altura de la raqueta menos el radio de la pelota (10)y si la posición x de la pelota está entre las coordenadas de inicio y final de la raqueta del jugador invierte el eje de Y para que rebote en otra direccion
+    if (y + dy > canvas.height - paddleHeight - 10) {
+      if (x > paddleX && x < paddleX + paddleWidth) {
+        dy = -dy;
+      } else {
+        // Aumentar marcador de la CPU y reinicia el juego
+        cpuScore++;
+        document.getElementById("cpuScore").innerHTML = cpuScore;
+        initGame();
+      }
+    }
+
+    // Comprobueba si se ha llegado a 10 para ver quien gana
+    if (userScore == 10) {
+      // Aumenta el marcador y borra el juego de la pantalla si el usuario hace 10 puntos
+      // Lanza el mensaje de Felicidades ganador del juego en una capa en el centro de la pantalla en color verde
+      cpuScore++;
+      document.body.innerHTML = '';
+      var successDiv = document.createElement("div");
+      successDiv.classList.add("success-message");
+      successDiv.innerHTML = "¡Felicidades, ganaste el juego!";
+      document.body.appendChild(successDiv);
+    } else if (cpuScore == 10) {
+      // Aumenta el marcador y borra el juego de la pantalla si la CPU hace 10 puntos
+      // Lanza el mensaje de Felicidades ganador del juego en una capa en el centro de la pantalla en color rojo
+      cpuScore++;
+      document.body.innerHTML = '';
+      var successDiv2 = document.createElement("div");
+      successDiv2.classList.add("success-message2");
+      successDiv2.innerHTML = "¡Ohh, perdiste! La CPU gano el juego.";
+      document.body.appendChild(successDiv2);
+    }
+
+
+  // Actualizar la posición de la pelota
+    x += dx;
+    y += dy;
+
+
+  // Mover la raqueta de la CPU hacia la pelota
+  // Hacemos que la maquina no gane siempre con un 70% de posibilidad de moverse hacia la pelota
+  // Aumenta y decrementa la velocidad de la raqueta de la CPU en la velocidad de X que es la pelota para asi moverse
+    if (Math.random() < 0.7) { 
+      if (cpuPaddleX + cpuPaddleWidth < x) {
+        cpuPaddleX += cpuPaddleSpeed;
+      } else if (cpuPaddleX > x) {
+        cpuPaddleX -= cpuPaddleSpeed;
+      }
+    }
+
+
+  // Mover la raqueta del usuario
+  // Comprueba si se ha presionado la tecla de derecha y si la posición X de la raqueta no supera el ancho del canvas menos el ancho de la raqueta aumenta la posición X de la raqueta del jugador en 7 y si no la decrementa en 7
+    if (rightPressed && paddleX < canvas.width - paddleWidth) {
+      paddleX += 7;
+    } else if (leftPressed && paddleX > 0) {
+      paddleX -= 7;
+    }
+  }
+
+// Ejecutar el bucle principal del juego
+  setInterval(draw, 10);
+
+</script>
+</body>
+</html>

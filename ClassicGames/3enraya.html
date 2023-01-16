@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>3 en raya</title>
+  <meta charset="utf-8">
+  <link  rel="stylesheet" type="text/css" href="index.css"></head>
+  <link rel="icon" href="Fotos/logo.png">
+  <style>
+
+    /* Se establece una imagen de fondo para la página, posiciona en el centro y la ajusta a la pantalla*/ 
+    body { 
+      background-image: url("https://media.giphy.com/media/3o6Zt5JSx1eVBYPBf2/giphy-downsized-large.gif");
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+    } 
+
+/* Se establece un estilo para la capa principal del juego, se posiciona, da color , medida y se centra el texto*/
+.container {
+  display: flex;
+  position: center;
+  margin: 110px auto;
+  align-items: center;
+  height: 30%;
+  width: 30%;
+  justify-content: center;
+  background-color: rgba(173, 12, 143 , 1);
+  color: white;
+  text-align: center;
+
+}
+
+/* Se establece un estilo para pantallas con un ancho de hasta 3000px y una medida para la capa en esas pantallas */
+@media (max-width: 3000px) {
+  .container {
+    width: 500px;
+    height: 620px;
+
+  }
+}
+
+/* Se establece el estilo para que las celdas de la tabla se junten y la osicion de la tabla */
+table {
+  border-collapse: collapse;
+  top: 48%;
+  left: 43%;
+}
+
+/* Se establece tamaño de cada celda, alineacion del texto en las celdas y el estilo del borde de las celdas*/
+td {      
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  vertical-align: middle;
+  border: 1px solid white;
+}
+
+/* Posicionar el tablero en el centro de la pantalla*/
+#board {
+  position: center;
+  margin: 0 auto;
+}
+
+/* Se establece un estilo para la capa dentro del la capa principal*/
+.layer {
+  display: flex;
+  flex: 1;
+  margin: 5px;
+}
+
+/* Se establece un estilo para el mensaje de Felicidades, se posiciona, se le da color verde, tamaño al texto interior forma y medida*/
+.success-message {
+ position: absolute;
+ top: 60%;
+ left: 50%;
+ transform: translate(-50%, -50%);
+ text-align: center;
+ background-color: green;
+ color: white;
+ padding: 20px;
+ border-radius: 10px;
+}
+
+/* Se establece un estilo para el mensaje de Derrota, se posiciona, se le da color rojo, tamaño al texto interior forma y medida*/
+.success-message2 {
+ position: absolute;
+ top: 60%;
+ left: 50%;
+ transform: translate(-50%, -50%);
+ text-align: center;
+ background-color: red;
+ color: white;
+ padding: 20px;
+ border-radius: 10px;
+}
+
+</style>
+</head>
+<body>
+
+  <!-- Se crea la capa principal del juego y dentro una subcapa para posicionarla dentro de la principal, con un titulo y descripcion del juego -->
+  <div class="container">
+    <div id="layer">
+      <h1>Juego 3 en raya</h1>
+      <p>Junta 3 x paga ganar:</p>
+      <!-- Se crea una tabla que sera el tablero del juego y la CPU, se hara de 3x3, con un Onclick que permite al jugador seleccionar la celda que quiere dejar ficha y marcarla con markCell en fila y columna (a(Fila), a(Columna))-->
+      <table id="board">
+        <tr>
+          <td onclick="markCell(0, 0)"></td>
+          <td onclick="markCell(0, 1)"></td>
+          <td onclick="markCell(0, 2)"></td>
+        </tr>
+        <tr>
+          <td onclick="markCell(1, 0)"></td>
+          <td onclick="markCell(1, 1)"></td>
+          <td onclick="markCell(1, 2)"></td>
+        </tr>
+        <tr>
+          <td onclick="markCell(2, 0)"></td>
+          <td onclick="markCell(2, 1)"></td>
+          <td onclick="markCell(2, 2)"></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <script>
+
+    // Variable para llevar la cuenta de cuantas veces se ha marcado una X y O
+    var numX = 0;
+    var numO = 0;
+
+
+    // Función para marcar una celda del tablero
+    function markCell(row, col) {
+      // Obtiene la celda a marcar
+      var cell = document.getElementById("board").rows[row].cells[col];
+
+      // Verifica si la celda está vacía
+      if (cell.innerHTML == "") {
+      // Marca la celda con una X si esta vacia
+        cell.innerHTML = "X";
+        numX++;
+      }
+
+      // Verifica si hay una victoria y te lanza una capa con felicidades
+      if (checkWin()) {
+        var successDiv = document.createElement("div");
+        successDiv.classList.add("success-message");
+        successDiv.innerHTML = "¡Felicidades, ganaste el juego!";
+        document.body.appendChild(successDiv);
+        return;
+      }
+
+      
+
+      // Marca otra celda aleatoriamente con una O de la CPU
+      markRandomCell("O");
+
+      // Verifica si hay una derrota y te lanza una capa con derrota
+      if (checkWin()) {
+       var successDiv2 = document.createElement("div");
+       successDiv2.classList.add("success-message2");
+       successDiv2.innerHTML = "¡Ohh, perdiste! La CPU gano el juego.";
+       document.body.appendChild(successDiv2);
+       return;
+     }
+    
+      // Si hay 4 o más O, elimina la O más antigua
+      if (numO >= 4) {
+        removeOldestO();
+      }
+      // Si hay 4 o más X, elimina la X más antigua
+      if (numX >= 4) {
+        removeOldestX();
+      }
+
+      // Verifica si el tablero está lleno y lanza alerta de empate
+      if (isBoardFull()) {
+        alert("Empate.");
+      }
+    }
+
+
+  // Función para marcar una celda aleatoriamente para la CPU
+  function markRandomCell(mark) {
+    // Elige una celda aleatoriamente
+    var row = Math.floor(Math.random() * 3);
+    var col = Math.floor(Math.random() * 3);
+
+
+    // Obtiene la celda a marcar
+    var cell = document.getElementById("board").rows[row].cells[col];
+
+
+    // Verifica si la celda está vacía
+    if (cell.innerHTML == "") {
+      // Marca la celda
+      cell.innerHTML = mark;
+      if (mark == "O") {
+        numO++;
+      }
+    } else {
+      // Si la celda no está vacía, vuelve a llamar a la función
+      markRandomCell(mark);
+    }
+  }
+
+
+// Función para verificar quien ha ganado
+  function checkWin() {
+    // Busca en las filas 
+    for (var row = 0; row < 3; row++) {
+      if (checkRowWin(row)) {
+        return true;
+      }
+    }
+
+    // Busca en  las columnas
+    for (var col = 0; col < 3; col++) {
+      if (checkColWin(col)) {
+        return true;
+      }
+    }
+
+    // Busca en las diagonales
+    if (checkDiagonalWin(0, 2)) {
+      return true;
+    }
+    if (checkDiagonalWin(2, 0)) {
+      return true;
+    }
+    return false;
+  }
+
+
+  // Función para verificar si hay una fila ganadora
+  // Comprueba si el contenido de las tres celdas es igual y no está vacío, devuelve true si es así, false en caso contrario
+  function checkRowWin(row) {
+    var cell1 = document.getElementById("board").rows[row].cells[0];
+    var cell2 = document.getElementById("board").rows[row].cells[1];
+    var cell3 = document.getElementById("board").rows[row].cells[2];
+    return cell1.innerHTML == cell2.innerHTML && cell2.innerHTML == cell3.innerHTML && cell1.innerHTML != "";
+  }
+
+
+  // Función para verificar si hay una columna ganadora
+  // Comprueba si el contenido de las tres celdas es igual y no está vacío, devuelve true si es así, false en caso contrario
+  function checkColWin(col) {
+    var cell1 = document.getElementById("board").rows[0].cells[col];
+    var cell2 = document.getElementById("board").rows[1].cells[col];
+    var cell3 = document.getElementById("board").rows[2].cells[col];
+    return cell1.innerHTML == cell2.innerHTML && cell2.innerHTML == cell3.innerHTML && cell1.innerHTML != "";
+  }
+
+
+  // Función para verificar si hay una diagonal ganadora
+  // Comprueba si el contenido de las tres celdas es igual y no está vacío, devuelve true si es así, false en caso contrario
+  function checkDiagonalWin(row1, row2) {
+    var cell1 = document.getElementById("board").rows[row1].cells[0];
+    var cell2 = document.getElementById("board").rows[1].cells[1];
+    var cell3 = document.getElementById("board").rows[row2].cells[2];
+    return cell1.innerHTML == cell2.innerHTML && cell2.innerHTML == cell3.innerHTML && cell1.innerHTML != "";
+  }
+
+
+  // Función para eliminar la X más antigua
+  function removeOldestX() {
+        // Recorre las celdas del tablero
+    for (var row = 0; row < 3; row++) {
+      for (var col = 0; col < 3; col++) {
+        var cell = document.getElementById("board").rows[row].cells[col];
+            // Si la celda contiene una X, la elimina y sale de la función
+        if (cell.innerHTML == "X") {
+          cell.innerHTML = "";
+          numX--;
+          return;
+        }
+      }
+    }
+  }
+
+
+  // Función para eliminar la X más antigua
+  function removeOldestO() {
+        // Recorre las celdas del tablero
+    for (var row = 0; row < 3; row++) {
+      for (var col = 0; col < 3; col++) {
+        var cell = document.getElementById("board").rows[row].cells[col];
+            // Si la celda contiene una O, la elimina y sale de la función
+        if (cell.innerHTML == "O") {
+          cell.innerHTML = "";
+          numO--;
+          return;
+        }
+      }
+    }
+  }
+
+
+// Función para verificar si el tablero está lleno
+  function isBoardFull() {
+        // Recorre las celdas del tablero
+    for (var row = 0; row < 3; row++) {
+      for (var col = 0; col < 3; col++) {
+        var cell = document.getElementById("board").rows[row].cells[col];
+            // Si encuentra una celda vacía, el tablero no está lleno
+        if (cell.innerHTML == "") {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  
+</script>
+</body>
+</html>
+
+

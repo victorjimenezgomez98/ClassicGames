@@ -1,0 +1,165 @@
+<html>
+<head>
+  <title>Juego de piedra, papel o tijera</title>
+  <html>
+  <head>
+    <title>Juego de piedra, papel o tijera</title>
+    <meta charset="utf-8">
+    <link  rel="stylesheet" type="text/css" href="index.css">
+    <link rel="icon" href="Fotos/logo.png">
+    <style> 
+
+      /* Se establece una imagen de fondo para la página, posiciona en el centro y la ajusta a la pantalla*/ 
+      body { 
+        background-image: url("https://media.giphy.com/media/l0O9yfMgf4MpEjct2/giphy.gif"); 
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+      } 
+
+      /* Se establece un estilo para la capa principal del juego, se posiciona, da color , medida y se centra el texto*/
+      .container {
+        display: flex;
+        position: center;
+        margin: 110px auto;
+        align-items: center;
+        height: 30%;
+        width: 30%;
+        justify-content: center;
+        background-color: grey;
+        color: white;
+        text-align: center;
+
+      }
+
+      /* Se establece un estilo para pantallas con un ancho de hasta 3000px y una medida para la capa en esas pantallas */
+      @media (max-width: 3000px) {
+        .container {
+          width: 500px;
+          height: 620px;
+
+        }
+      }
+
+      /* Se establece un estilo para la capa dentro del la capa principal*/
+      .layer {
+        display: flex;
+        flex: 1;
+        margin: 5px;
+      }
+
+      /* Se establece un estilo para el mensaje de Felicidades, se posiciona, se le da color verde, tamaño al texto interior forma y medida*/
+      .success-message {
+       position: absolute;
+       top: 70%;
+       left: 50%;
+       transform: translate(-50%, -50%);
+       text-align: center;
+       background-color: green;
+       color: white;
+       padding: 20px;
+       border-radius: 10px;
+     }
+
+     /* Se establece un estilo para el mensaje de Derrota, se posiciona, se le da color rojo, tamaño al texto interior forma y medida*/
+     .success-message2 {
+       position: absolute;
+       top: 70%;
+       left: 50%;
+       transform: translate(-50%, -50%);
+       text-align: center;
+       background-color: red;
+       color: white;
+       padding: 20px;
+       border-radius: 10px;
+     }
+
+   </style>
+ </head>
+ <body>
+
+  <!-- Se crea la capa principal del juego y dentro una subcapa para posicionarla dentro de la principal, con un titulo y descripcion del juego -->
+  <div class="container">
+    <div id="layer">
+      <h1>Juego de piedra, papel o tijera</h1>
+      <p>Elige una de las tres opciones:</p>
+      <!-- 3 Botones, cada uno para elegir la opcion del jugador en el juego -->
+      <button onclick="play('piedra')">Piedra</button>
+      <button onclick="play('papel')">Papel</button>
+      <button onclick="play('tijera')">Tijera</button>
+      <p id="result"></p>
+    </div>
+  </div>
+
+  <script>
+
+    // Variable para guardar el puntaje del jugador, de la CPU, iniciandolo en 0
+    var playerWins = 0;
+    var computerWins = 0;
+
+
+    function play(playerChoice) {
+        // Elije aleatoriamente una de las tres opciones del juego para la CPU 
+      var computerChoice = Math.random();
+      if (computerChoice < 0.34) {
+        computerChoice = "piedra";
+      } else if(computerChoice <= 0.67) {
+        computerChoice = "papel";
+      } else {
+        computerChoice = "tijera";
+      }
+
+
+      // Compara las opciones del jugador y de la CPU y determina quién gana
+      // Primero se ve si los resultados son iguales entre las dos partes para sacar empate y si no se va uno a uno comparando con los posibles resultados para especificar quien gana
+      var result = "";
+
+      if (computerChoice == playerChoice) {
+        result = "<h2>Empate</h2>";
+      } else if (computerChoice == "piedra") {
+        if (playerChoice == "tijera") {
+          result = "<h2>CPU gana</h2>";
+          computerWins++;
+        } else {
+          result = "<h2>Jugador gana</h2>";
+          playerWins++;
+        }
+      } else if (computerChoice == "papel") {
+        if (playerChoice == "piedra") {
+          result = "<h2>CPU gana</h2>";
+          computerWins++;
+        } else {
+          result = "<h2>Jugador gana</h2>";
+          playerWins++;
+        }
+      } else if (computerChoice == "tijera") {
+        if (playerChoice == "papel") {
+          result = "<h2>CPU gana</h2>";
+          computerWins++;
+        } else {
+          result = "<h2>Jugador gana</h2>";
+          playerWins++;
+        }
+      }
+
+
+      // Muestra el resultado y verifica si alguien ha ganado el juego cuando uno de los dos ha llegado a 3 victorias, creando por pantalla el mensaje de victoria o derrota en una capa de color rojo o verde
+      document.getElementById("result").innerHTML = "CPU eligió: " + computerChoice + "<br>" + "Usted eligio: " + playerChoice + "<br>" + result +  "Jugador: " + playerWins + " CPU: " + computerWins;
+      if (playerWins == 3) {
+        var successDiv = document.createElement("div");
+        successDiv.classList.add("success-message");
+        successDiv.innerHTML = "¡Felicidades, ganaste el juego!";
+        document.body.appendChild(successDiv);
+      } else if (computerWins == 3) {
+        var successDiv2 = document.createElement("div");
+        successDiv2.classList.add("success-message2");
+        successDiv2.innerHTML = "¡Ohh, perdiste! La CPU gano el juego.";
+        document.body.appendChild(successDiv2);
+      }
+    }
+
+  </script>
+</body>
+</html>

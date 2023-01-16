@@ -1,0 +1,112 @@
+<html>
+<head>
+  <title>Juego de adivinanza de números</title>
+  <meta charset="utf-8">
+  <link  rel="stylesheet" type="text/css" href="index.css">
+  <link rel="icon" href="Fotos/logo.png">
+  <style>
+
+    /* Se establece una imagen de fondo para la página, posiciona en el centro y la ajusta a la pantalla*/ 
+    body { 
+
+      background-image: url("https://media.giphy.com/media/V4NSR1NG2p0KeJJyr5/giphy.gif"); 
+      background-position: center 25%; 
+      background-size: cover; 
+    } 
+
+    /* Se establece un estilo para la capa principal del juego, se posiciona, da color , medida y se centra el texto*/
+    .container {
+      display: flex;
+      position: center;
+      margin: 110px auto;
+      align-items: center;
+      height: 30%;
+      width: 30%;
+      justify-content: center;
+      background-color: black;
+      color: white;
+      text-align: center;
+
+    }
+
+    /* Se establece un estilo para pantallas con un ancho de hasta 3000px y una medida para la capa en esas pantallas */
+    @media (max-width: 3000px) {
+      .container {
+        width: 500px;
+        height: 620px;
+
+      }
+    }
+
+    /* Se establece un estilo para la capa dentro del la capa principal*/
+    .layer {
+      display: flex;
+      flex: 1;
+      margin: 5px;
+    }
+
+    /* Se establece un estilo para el mensaje de Felicidades, se posiciona, se le da color verde, tamaño al texto interior forma y medida*/
+    .success-message {
+     position: absolute;
+     top: 58%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+     text-align: center;
+     background-color: green;
+     color: white;
+     padding: 20px;
+     border-radius: 10px;
+   }
+
+ </style>
+</head>
+<body>
+
+ <!-- Se crea la capa principal del juego y dentro una subcapa para posicionarla dentro de la principal, con un titulo y descripcion del juego -->
+ <div class="container">
+  <div id="layer">
+    <h1>Juego de adivinanza de números</h1>
+    <p>Elije un número entre 1 y 100 y trata de adivinar cuál es:</p>
+    <!-- Se crea un input para que el usuario ingrese su adivinanza, un boton para comprobar la adivinanza y un h3 para mostrar el resultado de la adivinanza -->
+    <input type="text" id="guess"/>
+    <button onclick="checkGuess()">Comprobar adivinanza</button>      
+    <h3 id="result"></h3>
+  </div>
+</div>
+
+<script>
+
+  // Se genera el número aleatorio que el jugador debe adivinar del 1 al 100
+  var correctNumber = Math.floor(Math.random() * 100) + 1;
+
+
+  function checkGuess() {
+    // Obtiene el número que eligió el jugador en el input
+    var guess = document.getElementById("guess").value;
+
+
+    // Verifica si el valor introducido es un número u otro valor, si es otro valor pide que ingrese numero
+    if (isNaN(guess)) {
+      document.getElementById("result").innerHTML = "Por favor, introduce un número válido";
+      return;
+    }
+
+
+    // Verifica si el número del jugador es demasiado alto o demasiado bajo y lo manda al h3 de resultado
+    if (guess > correctNumber) {
+      document.getElementById("result").innerHTML = "Tu adivinanza es demasiado alta";
+    } else if (guess < correctNumber) {
+      document.getElementById("result").innerHTML = "Tu adivinanza es demasiado baja";
+    } 
+    else {
+      // Si el número es adivinado, se elimina todo lo que hay en la página y se muestra un mensaje de felicidades
+      var successDiv = document.createElement("div");
+      successDiv.classList.add("success-message");
+      successDiv.innerHTML = "¡Felicidades, adivinaste el número!";
+      document.body.appendChild(successDiv);
+    }
+  }
+  
+</script>
+</body>
+</html>

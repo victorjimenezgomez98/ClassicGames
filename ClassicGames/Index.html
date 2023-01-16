@@ -1,0 +1,163 @@
+<!DOCTYPE>
+<html>
+<head>
+	<title> Classic Games </title>
+	<meta charset="utf-8">
+	<link  rel="stylesheet" type="text/css" href="index.css">
+	<link rel="icon" href="Fotos/logo.png">
+	<style>
+
+		/* Se establece una imagen de fondo para la página, posiciona en el centro y la ajusta a la pantalla*/ 
+		.index{
+			background-repeat: no-repeat;
+			background-position: center center;
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+			background-size: cover;
+
+		}
+
+		/* Se establece un borde transparente, una posición fija en el centro de la página, un fondo transparente, un color de texto y un tamaño de fuente*/ 
+		.button {
+			border: none;
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			background-color: rgba(11, 4, 17, 0);
+			color: #EA44CF;
+			padding: 35px 0px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+		}
+
+		/* Se establece un estilo para pantallas con un ancho de hasta 3000px y una medida para la capa en esas pantallas */
+    	@media (max-width: 3000px) {
+     		.bigpage {
+       		z-index: 9999;
+			position: absolute;
+			margin-top: 100%;
+			height: 550%;
+      		}
+    	}
+
+		/* Se establece un ancho y un alto, un fondo de color y un margen izquierdo*/
+		.bigpage{
+			width: 100%;
+			background-color: rgba(11, 4, 17, 1);
+			height: 550%;
+			margin-left: -8px;
+		}
+
+		/* Se establece un estilo para pantallas con un ancho de hasta 3000px y una medida para la capa en esas pantallas */
+    	@media (max-width: 3000px) {
+     		.container {
+       		width: 500px;
+       		height: 620px;
+
+      		}
+    	}
+
+		/* Se establece un margen superior específico*/
+		.games {
+			margin-top: 5%;
+		}
+
+		/* Se establece un estilo para la capa principal del juego, se posiciona, da color , medida y se centra el texto*/
+		.container {
+			display: flex;
+			height: 10%;
+			width: 100%;
+			justify-content: center;
+		}
+		
+
+		/* Se establece un estilo para la capa dentro del la capa principal*/
+		.layer {
+			display: flex;
+			flex: 1;
+			margin: 5px;
+		}
+
+		/* Se establece un estilo para la capa con color blanco y todo texto alineado al centro*/
+		.layerwelcome {
+			color: white;
+			text-align: center;
+		}
+		/* Se establece un color al texto*/
+		h1, h2 {
+			color: #EA44CF;
+		}
+
+		/* Se establece una imagen de fondo específica y un tamaño de imagen de fondo a todas las capas*/
+		.adivina {
+			background-image: url('Fotos/adivinaelnumero.png');
+			background-size: cover;
+		}
+		.blackjack {
+			background-image: url('Fotos/blackjack.png');
+			background-size: cover;
+		}
+		.dados {
+			background-image: url('Fotos/dados.png');
+			background-size: cover;
+		}
+		.piedrapapeltijera {
+			background-image: url('Fotos/piedrapapeltijera.png');
+			background-size: cover;
+		}
+		.pong {
+			background-image: url('Fotos/pong.png');
+			background-size: cover;
+		}
+		.tresenraya {
+			background-image: url('Fotos/tresenraya.png');
+			background-size: cover;
+		}
+
+	</style>
+</head>
+<body class="index" background="Fotos/fondo.png">
+	
+	<!-- Se crea lun boton en medio de la pantalla para que cuando sea pulsado baje a la pantalla de los juegos directamente -->
+	<button class="button" onclick="document.querySelector('.bigpage').scrollIntoView({ behavior: 'smooth' })">&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;</button>
+
+	<!-- Se crea la capa principal del la pagina y dentro una subcapa para posicionarla dentro de la principal, con un titulo y descripcion de la pagina -->
+	<div class="bigpage">	
+
+		<div class="layerwelcome">
+			<h1> BIENVENIDO A CLASSIC GAMES </h1>
+			<p> ¡Disfruta de nuestra amplia selección de juegos divertidos y emocionantes! </p>
+		</div>
+		<div class="layerwelcome">
+			<h2> Estos son nuestros juegos populares, haz click en el que quieras y entra en el juego </h2>
+			<p> ¡Esperamos que los disfrutes! </p>
+		</div>
+
+		<!-- Se crea una subcapa para posicionarla dentro de la principal y dentro mas capas que cuando sean pulsadas te manden a la pagina del juego que has marcado con un onclick -->
+		<div class="games">	
+
+			<div class="container">
+				<div class="layer adivina" onclick="window.location.href='adivinaelnumero.html'"></div>
+				<div class="layer blackjack" onclick="window.location.href='blackjack.html'"></div>
+			</div>
+			<div class="container">
+				<div class="layer dados" onclick="window.location.href='dados.html'"></div>
+				<div class="layer piedrapapeltijera" onclick="window.location.href='piedrapapeltijera.html'"></div>
+			</div>
+			<div class="container">
+				<div class="layer pong" onclick="window.location.href='juegopong.html'"></div>
+				<div class="layer tresenraya" onclick="window.location.href='3enraya.html'"></div>
+			</div>
+
+		</div>
+
+	</div>	
+
+
+
+
+</body>
+</html>

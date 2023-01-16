@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Blackjack</title>
+  <meta charset="utf-8">
+  <link  rel="stylesheet" type="text/css" href="index.css">
+  <link rel="icon" href="Fotos/logo.png">  
+  <style>
+
+    /* Se establece una imagen de fondo para la página, posiciona en el centro y la ajusta a la pantalla*/ 
+    body { 
+      background-image: url("https://media.giphy.com/media/l1IXY77djUsHH6S8o/giphy.gif"); 
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+    } 
+
+    /* Se establece un estilo para la capa principal del juego, se posiciona, da color , medida y se centra el texto*/
+    .container {
+      display: flex;
+      position: center;
+      margin: 110px auto;
+      align-items: center;
+      height: 30%;
+      width: 30%;
+      justify-content: center;
+      background-color: rgba(1, 55, 22 , 1);
+      color: white;
+      text-align: center;
+
+    }
+
+    /* Se establece un estilo para pantallas con un ancho de hasta 3000px y una medida para la capa en esas pantallas */
+    @media (max-width: 3000px) {
+      .container {
+        width: 500px;
+        height: 620px;
+
+      }
+    }
+
+    /* Se establece un estilo para la capa dentro del la capa principal*/
+    .layer {
+      display: flex;
+      flex: 1;
+      margin: 5px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Se crea la capa principal del juego y dentro una subcapa para posicionarla dentro de la principal, con un titulo y descripcion del juego -->
+  <div class="container">
+    <div id="layer">
+      <h1>Juego de Números</h1>
+      <div id="game">
+        <p>Tienes 7 tiradas, cada carta es del 1 al 7 y no puedes superar 21</p>
+        <h2>Turno del jugador:</h2>
+        <!-- 2 Botones, uno para dar un carta y otro para parar de darlas y parar el juego -->
+        <button id="give-number">Dar número</button>
+        <button id="stand">Plantarse</button>
+        <br></br>
+        <!-- 3 Capas para ver las cartas que saca, la suma de todas y la suma de la cpu -->
+        <div id="player-score"></div>
+      </div>
+      <div id="player-numbers"></div>
+    </br>
+    <div id="result"></div>
+    <div id="cpu">
+      <p>Turno de la CPU:</p>
+      <div id="cpu-score"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  //Variable para almacenar los numeros permitidos en el juego para el jugador y la CPU, otra para guardar el puntaje del jugador, de la CPU, otra para indicar si es turno del jugador y otra para almacenar todos los numeros del jugador
+  let numbers = [1, 2, 3, 4, 5, 6, 7];
+  let playerScore = 0;
+  let computerScore = 0;
+  let playerTurn = true;
+  let playerNumbers = [];
+
+
+  //Añade un evento al boton de "Dar numero" para dar un numero al jugador
+  document.getElementById("give-number").addEventListener("click", function() {
+  // Si aún no se han dado todos los números, se da otro número al jugador que se genera un numero aleatorio entre 1 y 7, luego se suma el numero generado al puntaje del jugador, se actualiza el resultado de las cartas que te se le da al usuario y el total que lleva y selanzan para verlas por pantalla
+    if (playerNumbers.length < 7) {
+      let number = Math.floor(Math.random() * 7) + 1;
+      playerScore += number;
+      playerNumbers.push(number);
+      document.getElementById("player-score").innerHTML = "Resultado: " + playerScore;
+      document.getElementById("player-numbers").innerHTML = "Cartas: " + playerNumbers.join(", ");
+  // Si ya no quedan números, se finaliza el turno del jugador
+    } else {
+      endTurn();
+    }
+  });
+
+
+  //Añade un evento al boton de "Plantarse" para finalizar turno
+  document.getElementById("stand").addEventListener("click", endTurn);
+
+
+  // Finaliza el turno del jugador, oculta los botones de control, muestra el turno de la CPU
+  // Da números aleatorios del 1 al 7 a la CPU hasta que su puntuación sea mayor o igual a 16 para que la CPU no se quede corta en cartas y se suma a resultado
+  function endTurn() {
+    document.getElementById("game").style.display = "none";
+    document.getElementById("cpu").style.display = "block";
+
+    while (computerScore < 16) {
+      let number = Math.floor(Math.random() * 7) + 1;
+      computerScore += number;
+      document.getElementById("cpu-score").innerHTML = computerScore;
+    }
+  // Finaliza el juego
+    endGame();
+  }
+
+
+  // Finaliza el juego, muestra el mensaje final, verifica quién ganó el juego
+  // Si la puntuación del jugador es mayor que la de la CPU y menor o igual a 21, o la puntuación de la CPU es mayor que 21, muestra un mensaje de victoria
+  function endGame() {
+    document.getElementById("result").style.display = "block";
+    if (playerScore > computerScore && playerScore <= 21 || computerScore > 21) {
+      document.getElementById("result").innerHTML = "<h1>¡Ganaste!</h1>";
+    } else {
+    // En cualquier otro caso, muestra un mensaje de derrota
+      document.getElementById("result").innerHTML = "<h1>¡Perdiste!</h1>";
+    }
+  }
+
+
+
+// Inicia el juego al cargar la página
+  window.addEventListener("load", function() {
+    document.getElementById("cpu").style.display = "none";
+    document.getElementById("result").style.display = "none";
+  });
+
+</script>
+</body>
+</html>
+
